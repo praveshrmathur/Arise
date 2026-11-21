@@ -32,14 +32,20 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Configure Android Native Platform
-        run: flutter create --org com.projecthunter --project-name project_hunter --platforms android .
+      - name: Recreate Android Project with Native Wrapper
+        run: |
+          rm -rf android
+          flutter create --org com.projecthunter --project-name project_hunter --platforms android .
+
+      - name: Add Permissions to AndroidManifest
+        run: |
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>\n    <uses-permission android:name="android.permission.VIBRATE"/>' android/app/src/main/AndroidManifest.xml
 
       - name: Get Dependencies
         run: flutter pub get
 
       - name: Build Release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
