@@ -32,16 +32,11 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Generate Clean Android Platform
-        run: |
-          rm -rf android
-          flutter create --platforms=android --org=com.projecthunter .
-
       - name: Get Dependencies
         run: flutter pub get
 
       - name: Build Release APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
@@ -55,7 +50,7 @@ jobs:
         with:
           tag_name: v1.0.0-${{ github.run_number }}
           name: Project Hunter v1.0.0 Build ${{ github.run_number }}
-          body: "Download the installable APK file below."
+          body: "Direct download APK for Project Hunter RPG Fitness Application."
           files: build/app/outputs/flutter-apk/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
