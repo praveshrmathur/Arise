@@ -5,12 +5,15 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch: # Allows manual trigger from the GitHub web button
+  workflow_dispatch:
 
 jobs:
   build:
     name: Build Android APK
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Code
@@ -29,6 +32,9 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Configure Android Native Platform
+        run: flutter create --org com.projecthunter --project-name project_hunter --platforms android .
+
       - name: Get Dependencies
         run: flutter pub get
 
@@ -41,3 +47,14 @@ jobs:
           name: project-hunter-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 14
+
+      - name: Create Direct Download Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        with:
+          tag_name: v1.0.0-${{ github.run_number }}
+          name: Project Hunter v1.0.0 Build ${{ github.run_number }}
+          body: "Direct download APK for Project Hunter RPG Fitness Application."
+          files: build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
