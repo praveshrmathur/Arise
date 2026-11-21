@@ -32,27 +32,22 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Recreate Android Project with Native Wrapper
+      - name: Generate Clean Android Platform
         run: |
           rm -rf android
-          flutter create --org com.projecthunter --project-name project_hunter --platforms android .
-
-      - name: Add Permissions to AndroidManifest
-        run: |
-          sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>\n    <uses-permission android:name="android.permission.VIBRATE"/>' android/app/src/main/AndroidManifest.xml
+          flutter create --platforms=android --org=com.projecthunter .
 
       - name: Get Dependencies
         run: flutter pub get
 
       - name: Build Release APK
-        run: flutter build apk --release --no-tree-shake-icons
+        run: flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: project-hunter-apk
           path: build/app/outputs/flutter-apk/app-release.apk
-          retention-days: 14
 
       - name: Create Direct Download Release
         uses: softprops/action-gh-release@v2
@@ -60,7 +55,7 @@ jobs:
         with:
           tag_name: v1.0.0-${{ github.run_number }}
           name: Project Hunter v1.0.0 Build ${{ github.run_number }}
-          body: "Direct download APK for Project Hunter RPG Fitness Application."
+          body: "Download the installable APK file below."
           files: build/app/outputs/flutter-apk/app-release.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
