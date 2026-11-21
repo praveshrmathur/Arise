@@ -33,6 +33,9 @@ dependencies:
   # Icons & Aesthetics
   cupertino_icons: ^1.0.8
 
+dependency_overrides:
+  app_links: ^6.3.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -42,6 +45,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # assets:
-  #   - assets/icons/
-  #   - assets/images/
