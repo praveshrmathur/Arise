@@ -32,21 +32,32 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Ensure Gradle Wrapper
+        run: |
+          cd android
+          gradle wrapper --gradle-version 8.3 || true
+          chmod +x gradlew || true
+          cd ..
+
       - name: Get Dependencies
         run: flutter pub get
+
+      - name: Analyze Project
+        run: flutter analyze --no-fatal-infos
 
       - name: Build Release APK
         run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: project-hunter-apk
           path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: Create Direct Download Release
         uses: softprops/action-gh-release@v2
-        if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+        if: success() && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
         with:
           tag_name: v1.0.0-${{ github.run_number }}
           name: Project Hunter v1.0.0 Build ${{ github.run_number }}
