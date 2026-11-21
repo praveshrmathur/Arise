@@ -1,3 +1,9 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {
@@ -16,20 +22,8 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
-def flutterRoot = localProperties.getProperty('flutter.sdk')
-if (flutterRoot == null) {
-    flutterRoot = System.getenv("FLUTTER_ROOT")
-}
-
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-if (flutterRoot != null) {
-    apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
-}
-
 android {
     namespace "com.projecthunter.rpg"
-    compileSdkVersion 34
     compileSdk 34
     ndkVersion flutter.ndkVersion
 
@@ -48,8 +42,8 @@ android {
 
     defaultConfig {
         applicationId "com.projecthunter.rpg"
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdk 21
+        targetSdk 34
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -64,5 +58,3 @@ android {
 flutter {
     source '../..'
 }
-
-dependencies {}
